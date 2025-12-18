@@ -37,6 +37,7 @@ val create
   -> ?parameters:Lib.t list Resolve.Memo.t
   -> ?modes:Mode_conf.Set.Details.t Lib_mode.Map.t
   -> ?bin_annot:bool
+  -> ?bin_annot_cms:bool
   -> ?loc:Loc.t
   -> unit
   -> t Memo.t
@@ -82,6 +83,7 @@ val for_module_generated_at_link_time
 
 val for_plugin_executable : t -> embed_in_plugin_libraries:(Loc.t * Lib_name.t) list -> t
 val bin_annot : t -> bool
+val bin_annot_cms : t -> bool
 val without_bin_annot : t -> t
 
 (** The dependency graph for the modules of the library. *)

@@ -231,6 +231,18 @@ let build_cm
          S [ Hidden_targets [ fn ]; As annots ])
        else Command.Args.empty
    in
+   let cms_args =
+     match cm_kind with
+     | Ocaml Cmx | Melange _ -> Command.Args.empty
+     | Ocaml (Cmi | Cmo) ->
+       if Compilation_context.bin_annot_cms cctx
+          && Ocaml_config.ox ocaml.ocaml_config
+       then (
+         match Obj_dir.Module.cms_file obj_dir m ~cm_kind ~ml_kind with
+         | None -> Command.Args.empty
+         | Some fn -> S [ Hidden_targets [ fn ]; As [ "-bin-annot-cms" ] ])
+       else Command.Args.empty
+   in
    let opaque_arg : _ Command.Args.t =
      let intf_only = cm_kind = Ocaml Cmi && not (Module.has m ~ml_kind:Impl) in
      if opaque || (intf_only && Ocaml.Version.supports_opaque_for_mli ocaml.version)
@@ -301,6 +313,7 @@ let build_cm
             compiler
             [ flags
             ; cmt_args
+            ; cms_args
             ; Command.Args.S obj_dirs
             ; Command.Args.as_any
                 (Lib_mode.Cm_kind.Map.get (Compilation_context.includes cctx) cm_kind)
